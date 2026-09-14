@@ -1,3 +1,4 @@
+
 # DevOps Portfolio Project — Terraform + EKS + CI/CD
 
 A small end-to-end project demonstrating Infrastructure as Code, container
@@ -47,3 +48,5 @@ _(Fill this in once you've actually hit an issue — e.g. a bad rollout, a
 misconfigured probe, an IAM permission gap. This section is the most
 valuable part of the whole repo for interviews — it's proof you debugged a
 real system, not just followed a tutorial.)_
+=======
+# devops-portfolio-terraform-eks
