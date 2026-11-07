@@ -20,14 +20,11 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 locals {
-  tfmodules     = "git::https://github.com/roshhegde/tfmodules.git//modules"
-  tfmodules_ref = "?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
-
   cluster_arn = "arn:aws:eks:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster/${var.project_name}-cluster"
 }
 
 module "ecr" {
-  source = "${local.tfmodules}/ecr-repository${local.tfmodules_ref}"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/ecr-repository?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
 
   name                 = var.ecr_repository_name
   image_tag_mutability = "IMMUTABLE"
@@ -62,10 +59,10 @@ data "aws_iam_policy_document" "deploy" {
 }
 
 module "ci_role" {
-  source = "${local.tfmodules}/iam-github-oidc${local.tfmodules_ref}"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/iam-github-oidc?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
 
-  role_name            = "${var.project_name}-github-deploy"
-  github_repository    = var.github_repository
-  github_ref           = "refs/heads/main"
-  inline_policy_json   = data.aws_iam_policy_document.deploy.json
+  role_name          = "${var.project_name}-github-deploy"
+  github_repository  = var.github_repository
+  github_ref         = "refs/heads/main"
+  inline_policy_json = data.aws_iam_policy_document.deploy.json
 }
