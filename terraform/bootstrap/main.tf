@@ -20,7 +20,11 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 locals {
+  # Built from known values, not module outputs. A module output is unknown
+  # until apply, which would make the inline policy unknown and break the
+  # count in the iam-role module.
   cluster_arn = "arn:aws:eks:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster/${var.project_name}-cluster"
+  ecr_arn     = "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.current.account_id}:repository/${var.ecr_repository_name}"
 }
 
 module "ecr" {
@@ -48,7 +52,7 @@ data "aws_iam_policy_document" "deploy" {
       "ecr:PutImage",
       "ecr:UploadLayerPart",
     ]
-    resources = [module.ecr.repository_arn]
+    resources = [local.ecr_arn]
   }
 
   statement {
