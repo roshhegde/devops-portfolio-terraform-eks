@@ -17,7 +17,7 @@ variable "vpc_cidr" {
 }
 
 variable "availability_zones" {
-  description = "AZs to spread subnets across"
+  description = "AZs to spread subnets across (two or more)"
   type        = list(string)
   default     = ["ap-south-1a", "ap-south-1b"]
 }
@@ -38,4 +38,17 @@ variable "desired_nodes" {
   description = "Desired worker node count"
   type        = number
   default     = 1
+}
+
+variable "api_public_access_cidrs" {
+  description = "CIDRs allowed to reach the public Kubernetes API endpoint. Restrict to your own IP range where possible."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "ci_role_arn" {
+  description = "ARN of the GitHub deploy role from the bootstrap stack. Grants it edit access on the cluster. Leave null to skip."
+  type        = string
+  default     = null
+  nullable    = true
 }
