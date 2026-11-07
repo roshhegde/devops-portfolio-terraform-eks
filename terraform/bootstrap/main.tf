@@ -28,7 +28,7 @@ locals {
 }
 
 module "ecr" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/ecr-repository?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/ecr-repository?ref=a8634da613b133e40774cb8b82c890aab46d0644"
 
   name                 = var.ecr_repository_name
   image_tag_mutability = "IMMUTABLE"
@@ -63,10 +63,12 @@ data "aws_iam_policy_document" "deploy" {
 }
 
 module "ci_role" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/iam-github-oidc?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/iam-github-oidc?ref=a8634da613b133e40774cb8b82c890aab46d0644"
 
   role_name          = "${var.project_name}-github-deploy"
   github_repository  = var.github_repository
   github_ref         = "refs/heads/main"
+  # GitHub puts owner and repo IDs in the token subject. The old format no longer matches.
+  subject            = "repo:roshhegde@208154472/devops-portfolio-terraform-eks@1359407300:ref:refs/heads/main"
   inline_policy_json = data.aws_iam_policy_document.deploy.json
 }

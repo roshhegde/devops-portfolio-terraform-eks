@@ -31,19 +31,19 @@ locals {
 }
 
 module "vpc" {
-  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/vpc?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/vpc?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   name     = var.project_name
   vpc_cidr = var.vpc_cidr
 }
 
 module "igw" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/internet-gateway?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/internet-gateway?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   name   = var.project_name
   vpc_id = module.vpc.vpc_id
 }
 
 module "public_subnet" {
-  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/subnet?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/subnet?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   for_each = local.azs
 
   name                    = "${var.project_name}-public-${each.value}"
@@ -55,7 +55,7 @@ module "public_subnet" {
 }
 
 module "private_subnet" {
-  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/subnet?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/subnet?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   for_each = local.azs
 
   name              = "${var.project_name}-private-${each.value}"
@@ -66,39 +66,39 @@ module "private_subnet" {
 }
 
 module "nat" {
-  source           = "git::https://github.com/roshhegde/tfmodules.git//modules/nat-gateway?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source           = "git::https://github.com/roshhegde/tfmodules.git//modules/nat-gateway?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   name             = var.project_name
   public_subnet_id = module.public_subnet[var.availability_zones[0]].subnet_id
 }
 
 module "public_rt" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   name   = "${var.project_name}-public"
   vpc_id = module.vpc.vpc_id
 }
 
 module "private_rt" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   name   = "${var.project_name}-private"
   vpc_id = module.vpc.vpc_id
 }
 
 module "public_default_route" {
-  source                 = "git::https://github.com/roshhegde/tfmodules.git//modules/route?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source                 = "git::https://github.com/roshhegde/tfmodules.git//modules/route?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   route_table_id         = module.public_rt.route_table_id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = module.igw.internet_gateway_id
 }
 
 module "private_default_route" {
-  source                 = "git::https://github.com/roshhegde/tfmodules.git//modules/route?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source                 = "git::https://github.com/roshhegde/tfmodules.git//modules/route?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   route_table_id         = module.private_rt.route_table_id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = module.nat.nat_gateway_id
 }
 
 module "public_assoc" {
-  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table-association?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table-association?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   for_each = module.public_subnet
 
   subnet_id      = each.value.subnet_id
@@ -106,7 +106,7 @@ module "public_assoc" {
 }
 
 module "private_assoc" {
-  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table-association?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source   = "git::https://github.com/roshhegde/tfmodules.git//modules/route-table-association?ref=a8634da613b133e40774cb8b82c890aab46d0644"
   for_each = module.private_subnet
 
   subnet_id      = each.value.subnet_id
@@ -114,7 +114,7 @@ module "private_assoc" {
 }
 
 module "eks_cluster" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/eks-cluster?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/eks-cluster?ref=a8634da613b133e40774cb8b82c890aab46d0644"
 
   name                = var.project_name
   kubernetes_version  = var.cluster_version
@@ -124,7 +124,7 @@ module "eks_cluster" {
 }
 
 module "node_group" {
-  source = "git::https://github.com/roshhegde/tfmodules.git//modules/eks-node-group?ref=2fd8bc1983dc436d6a6dcccd60f4255bb81a26e6"
+  source = "git::https://github.com/roshhegde/tfmodules.git//modules/eks-node-group?ref=a8634da613b133e40774cb8b82c890aab46d0644"
 
   name           = var.project_name
   cluster_name   = module.eks_cluster.cluster_name
